@@ -4,28 +4,22 @@ function readDatabase(path) {
   return new Promise((resolve, reject) => {
     fs.readFile(path, 'utf8', (err, data) => {
       if (err) {
-        reject(Error(err));
+        reject(err);
         return;
       }
-      const content = data.toString().split('\n');
 
-      let students = content.filter((item) => item);
-
-      students = students.map((item) => item.split(','));
+      const lines = data.split('\n').filter((line) => line);
 
       const fields = {};
-      for (const i in students) {
-        if (i !== 0) {
-          if (!fields[students[i][3]]) fields[students[i][3]] = [];
 
-          fields[students[i][3]].push(students[i][0]);
-        }
+      for (let i = 1; i < lines.length; i += 1) {
+        const [firstname, , , field] = lines[i].split(',');
+
+        if (!fields[field]) fields[field] = [];
+        fields[field].push(firstname);
       }
 
-      delete fields.field;
-
       resolve(fields);
-
     });
   });
 }

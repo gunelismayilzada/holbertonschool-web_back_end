@@ -6,9 +6,7 @@ function controllerRouting(app) {
   const router = express.Router();
   app.use('/', router);
 
-  router.get('/', (req, res) => {
-    AppController.getHomepage(req, res);
-  });
+  router.get('/', AppController.getHomepage);
 
   router.get('/students', (req, res) => {
     StudentsController.getAllStudents(req, res, process.argv[2]);
