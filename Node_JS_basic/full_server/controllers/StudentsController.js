@@ -1,43 +1,42 @@
 import readDatabase from '../utils';
 
 class StudentsController {
-  static getAllStudents(request, response, DATABASE) {
-    readDatabase(DATABASE)
-      .then((fields) => {
-        const students = [];
+  static getAllStudents(req, res) {
+    const db = process.argv[2];
 
-        let msg;
+    readDatabase(db)
+      .then((data) => {
+        let output = 'This is the list of our students';
 
-        students.push('This is the list of our students');
+        const fields = Object.keys(data).sort((a, b) => a.localeCompare(b));
 
-        for (const key of Object.keys(fields)) {
-          msg = `Number of students in ${key}: ${
-            fields[key].length
-          }. List: ${fields[key].join(', ')}`;
+        fields.forEach((field) => {
+          output += `\nNumber of students in ${field}: ${data[field].length}. List: ${data[field].join(', ')}`;
+        });
 
-          students.push(msg);
-        }
-        response.send(200, `${students.join('\n')}`);
+        res.status(200).send(output);
       })
       .catch(() => {
-        response.send(500, 'Cannot load the database');
+        res.status(500).send('Cannot load the database');
       });
   }
 
-  static getAllStudentsByMajor(request, response, DATABASE) {
-    const { major } = request.params;
+  static getAllStudentsByMajor(req, res) {
+    const db = process.argv[2];
+    const major = req.params.major;
 
     if (major !== 'CS' && major !== 'SWE') {
-      response.send(500, 'Major parameter must be CS or SWE');
-    } else {
-      readDatabase(DATABASE)
-        .then((fields) => {
-          const students = fields[major];
-
-          response.send(200, `List: ${students.join(', ')}`);
-        })
-        .catch(() => response.send(500, 'Cannot load the database'));
+      res.status(500).send('Major parameter must be CS or SWE');
+      return;
     }
+
+    readDatabase(db)
+      .then((data) => {
+        res.status(200).send(`List: ${data[major].join(', ')}`);
+      })
+      .catch(() => {
+        res.status(500).send('Cannot load the database');
+      });
   }
 }
 
