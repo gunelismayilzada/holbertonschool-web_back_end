@@ -10,7 +10,7 @@ class StudentsController {
 
         sorted.forEach((field) => {
           response.push(
-            `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`
+            `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`,
           );
         });
 
